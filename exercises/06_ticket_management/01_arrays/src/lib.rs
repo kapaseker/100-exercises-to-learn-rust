@@ -1,9 +1,10 @@
 // TODO: Flesh out the `WeekTemperatures` struct and its method implementations to pass the tests.
 
-pub struct WeekTemperatures {
-    // TODO
-}
+use enum_ordinalize::Ordinalize;
 
+pub struct WeekTemperatures([i32; 7]);
+
+#[derive(Debug, PartialEq, Eq, Ordinalize)]
 pub enum Weekday {
     Monday,
     Tuesday,
@@ -16,15 +17,20 @@ pub enum Weekday {
 
 impl WeekTemperatures {
     pub fn new() -> Self {
-        todo!()
+        Self([i32::MIN; 7])
     }
 
     pub fn get_temperature(&self, day: Weekday) -> Option<i32> {
-        todo!()
+        let temp = self.0[day.ordinal() as usize];
+        if temp == i32::MIN {
+            None
+        } else {
+            Some(temp)
+        }
     }
 
     pub fn set_temperature(&mut self, day: Weekday, temperature: i32) {
-        todo!()
+        self.0[day.ordinal() as usize] = temperature;
     }
 }
 
