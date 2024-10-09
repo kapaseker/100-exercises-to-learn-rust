@@ -8,11 +8,11 @@ pub struct TicketStore {
     tickets: Vec<Ticket>,
 }
 
-impl <'a> IntoIterator for TicketStore {
-    type Item = Ticket;
+impl <'a> IntoIterator for &'a TicketStore {
+    type Item = &'a Ticket;
     type IntoIter = Iter<'a, Ticket>;
 
-    fn into_iter(&self) -> Self::IntoIter {
+    fn into_iter(self) -> Self::IntoIter {
         self.tickets.iter()
     }
 }
