@@ -4,9 +4,30 @@
 //  Hint: check out `Vec::leak`.
 
 use std::thread;
+use std::thread::JoinHandle;
 
 pub fn sum(v: Vec<i32>) -> i32 {
-    todo!()
+
+    if v.len() > 2 {
+
+        let v = v.leak();
+
+        let mid = v.len() / 2;
+        let left = &v[0..mid];
+        let right = &v[mid..];
+
+        let left_thread: JoinHandle<i32> = thread::spawn(|| {
+            left.iter().sum()
+        });
+
+        let right_thread: JoinHandle<i32> = thread::spawn(|| {
+            right.iter().sum()
+        });
+
+        left_thread.join().unwrap() + right_thread.join().unwrap()
+    } else {
+        v.iter().sum()
+    }
 }
 
 #[cfg(test)]
