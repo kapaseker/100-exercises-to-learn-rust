@@ -1,3 +1,5 @@
+use std::ptr::copy;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
 
 // TODO: write an echo server that accepts incoming TCP connections and
@@ -11,7 +13,11 @@ use tokio::net::TcpListener;
 // - `tokio::net::TcpStream::split` to obtain a reader and a writer from the socket
 // - `tokio::io::copy` to copy data from the reader to the writer
 pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
-    todo!()
+    loop {
+        let (mut socket, addr) = listener.accept().await?;
+        let (mut a, mut b) = socket.split();
+        tokio::io::copy(&mut a, &mut b).await?;
+    }
 }
 
 #[cfg(test)]
@@ -25,7 +31,7 @@ mod tests {
         let addr = listener.local_addr().unwrap();
         tokio::spawn(echo(listener));
 
-        let requests = vec!["hello", "world", "foo", "bar"];
+        let requests = vec!["hello", "world", "foo", "bar", "it is me"];
 
         for request in requests {
             let mut socket = tokio::net::TcpStream::connect(addr).await.unwrap();
